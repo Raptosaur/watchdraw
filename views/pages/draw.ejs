@@ -222,7 +222,7 @@
                     final_text: result
                 });
                 document.querySelector('#adminResult').value = 0;
-                const msToComplete = 3000;
+                const msToComplete = 5000;
                 let current = 0;
                 let countUp;
                 countUp = setInterval(() => {
@@ -231,13 +231,17 @@
                         current = result;
                         clearInterval(countUp);
                         document.querySelector('#adminResult').classList.add('btn-rose');
+                        firework.start();
+                        confetti.start();
                     }
                     document.querySelector('#adminResult').value = current;
                 }, 100);
 
                 document.querySelector('#drawSubtext').innerText = 'The draw has been completed, and the winning number is shown above.';
-                firework.start();
-                confetti.start();
+                if(!getQueryVariable('create')){
+                    firework.start();
+                    confetti.start();
+                }
             });
         }
     </script>
