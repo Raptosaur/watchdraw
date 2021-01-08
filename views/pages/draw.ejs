@@ -186,6 +186,7 @@
                     document.querySelector('#adminRoomId').value = data.roomId;
                     document.querySelector('#adminForm').onsubmit = (e) => {
                         e.preventDefault();
+                        document.querySelector('#adminResult').classList.remove('btn-rose');
                         window.socket.emit('draw', JSON.stringify({
                             passcode,
                             lowerLimit: document.querySelector('#adminLowerLimit').value,
@@ -222,7 +223,7 @@
                     final_text: result
                 });
                 document.querySelector('#adminResult').value = 0;
-                const msToComplete = 5000;
+                const msToComplete = result >= 5000 ? 5000 : result;
                 let current = 0;
                 let countUp;
                 countUp = setInterval(() => {
@@ -230,6 +231,7 @@
                     if(current >= result){
                         current = result;
                         clearInterval(countUp);
+                        document.querySelector('#adminResult').value = current;
                         document.querySelector('#adminResult').classList.add('btn-rose');
                         firework.start();
                         confetti.start();
