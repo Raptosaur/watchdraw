@@ -79,6 +79,9 @@
         .page-content{
             z-index: 9999999;
         }
+        #adminResult{
+            transition: background-color 1s linear;
+        }
     </style>
     <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous"></script>
 </head>
@@ -104,7 +107,7 @@
             <input class="bottom-margin-sm" id="adminRoomId" autocomplete="off" type="text" placeholder="draw code" disabled="true" /><br />
             <input class="bottom-margin-sm" id="adminLowerLimit" autocomplete="off" type="number" min="0" placeholder="lower limit" required="true" /><br />
             <input class="bottom-margin-sm" id="adminUpperLimit" autocomplete="off" type="number" max="50000" placeholder="upper limit" required="true" /><br />
-            <input class="bottom-margin-sm" id="adminResult" autocomplete="off" type="text" value="result" disabled="true" /><br />
+            <input class="bottom-margin-sm" id="adminResult" autocomplete="off" type="text" value="result" disabled="true" title="The result will now count up for approx 5 seconds until it hits the goal." /><br />
             <button class="btn-rose bottom-margin-sm">Draw result</button><br />
         </form>
         <small>There are currently <span class="clientCount">0</span> people watching your draw.</small>
@@ -218,7 +221,20 @@
                 $(".drawResult").codex({
                     final_text: result
                 });
-                document.querySelector('#adminResult').value = result;
+                document.querySelector('#adminResult').value = 0;
+                const msToComplete = 3000;
+                let current = 0;
+                let countUp;
+                countUp = setInterval(() => {
+                    current += Math.floor((result/msToComplete)*100);
+                    if(current >= result){
+                        current = result;
+                        clearInterval(countUp);
+                        document.querySelector('#adminResult').classList.add('btn-rose');
+                    }
+                    document.querySelector('#adminResult').value = current;
+                }, 100);
+
                 document.querySelector('#drawSubtext').innerText = 'The draw has been completed, and the winning number is shown above.';
                 firework.start();
                 confetti.start();
