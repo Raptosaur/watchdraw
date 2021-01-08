@@ -1,0 +1,57 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/bin/node', '/usr/bin/npm', 'install', 'socket.io' ]
+2 info using npm@3.5.2
+3 info using node@v8.10.0
+4 silly loadCurrentTree Starting
+5 silly install loadCurrentTree
+6 silly install readLocalPackageData
+7 silly fetchPackageMetaData socket.io
+8 silly fetchNamedPackageData socket.io
+9 silly mapToRegistry name socket.io
+10 silly mapToRegistry using default registry
+11 silly mapToRegistry registry https://registry.npmjs.org/
+12 silly mapToRegistry uri https://registry.npmjs.org/socket.io
+13 verbose get https://registry.npmjs.org/socket.io not expired, no request
+14 silly install normalizeTree
+15 silly loadCurrentTree Finishing
+16 silly loadIdealTree Starting
+17 silly install loadIdealTree
+18 silly cloneCurrentTree Starting
+19 silly install cloneCurrentTreeToIdealTree
+20 silly cloneCurrentTree Finishing
+21 silly loadShrinkwrap Starting
+22 silly install loadShrinkwrap
+23 silly loadShrinkwrap Finishing
+24 silly loadAllDepsIntoIdealTree Starting
+25 silly install loadAllDepsIntoIdealTree
+26 verbose stack Error: Missing required argument #1
+26 verbose stack     at andLogAndFinish (/usr/share/npm/lib/fetch-package-metadata.js:31:3)
+26 verbose stack     at fetchPackageMetadata (/usr/share/npm/lib/fetch-package-metadata.js:51:22)
+26 verbose stack     at resolveWithNewModule (/usr/share/npm/lib/install/deps.js:456:12)
+26 verbose stack     at /usr/share/npm/lib/install/deps.js:190:5
+26 verbose stack     at /usr/share/npm/node_modules/slide/lib/async-map.js:52:35
+26 verbose stack     at Array.forEach (<anonymous>)
+26 verbose stack     at /usr/share/npm/node_modules/slide/lib/async-map.js:52:11
+26 verbose stack     at Array.forEach (<anonymous>)
+26 verbose stack     at asyncMap (/usr/share/npm/node_modules/slide/lib/async-map.js:51:8)
+26 verbose stack     at exports.loadRequestedDeps (/usr/share/npm/lib/install/deps.js:188:3)
+27 verbose cwd /home/elijah/Documents/livedraw
+28 error Linux 5.4.0-59-generic
+29 error argv "/usr/bin/node" "/usr/bin/npm" "install" "socket.io"
+30 error node v8.10.0
+31 error npm  v3.5.2
+32 error code EMISSINGARG
+33 error typeerror Error: Missing required argument #1
+33 error typeerror     at andLogAndFinish (/usr/share/npm/lib/fetch-package-metadata.js:31:3)
+33 error typeerror     at fetchPackageMetadata (/usr/share/npm/lib/fetch-package-metadata.js:51:22)
+33 error typeerror     at resolveWithNewModule (/usr/share/npm/lib/install/deps.js:456:12)
+33 error typeerror     at /usr/share/npm/lib/install/deps.js:190:5
+33 error typeerror     at /usr/share/npm/node_modules/slide/lib/async-map.js:52:35
+33 error typeerror     at Array.forEach (<anonymous>)
+33 error typeerror     at /usr/share/npm/node_modules/slide/lib/async-map.js:52:11
+33 error typeerror     at Array.forEach (<anonymous>)
+33 error typeerror     at asyncMap (/usr/share/npm/node_modules/slide/lib/async-map.js:51:8)
+33 error typeerror     at exports.loadRequestedDeps (/usr/share/npm/lib/install/deps.js:188:3)
+34 error typeerror This is an error with npm itself. Please report this error at:
+34 error typeerror     <http://github.com/npm/npm/issues>
+35 verbose exit [ 1, true ]

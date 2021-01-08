@@ -1,0 +1,229 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Drawing System - Draw</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <style>
+        body, html{
+            background: #494949;
+            color: #ffffff;
+            text-align: center;
+        }
+        body{
+            margin: 0;
+        }
+        *{
+            font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        h1,h2,h3,h4,h5,h6{
+            font-weight: 300;
+        }
+        h1{
+            font-size: 350%;
+        }
+        .top-margin{
+            margin-top: 35vh;
+        }
+        .top-margin-sm{
+            margin-top: 25vh;
+        }
+        button{
+            font-size: 150%;
+            padding: 15px;
+            margin-right: 20px;
+            cursor: pointer;
+            border: 0;
+            border-radius: 5px;
+            -webkit-box-shadow: 0px 0px 5px 1px rgba(0,0,0,0.75);
+            -moz-box-shadow: 0px 0px 5px 1px rgba(0,0,0,0.75);
+            box-shadow: 0px 0px 5px 1px rgba(0,0,0,0.75);
+        }
+        input{
+            font-size: 150%;
+            padding: 15px;
+            margin-right: 20px;
+            border: 0;
+            border-radius: 5px;
+            -webkit-box-shadow: 0px 0px 5px 1px rgba(0,0,0,0.75);
+            -moz-box-shadow: 0px 0px 5px 1px rgba(0,0,0,0.75);
+            box-shadow: 0px 0px 5px 1px rgba(0,0,0,0.75);
+            text-align: center;
+            text-transform: uppercase;
+        }
+        .btn-rose{
+            background:#FF5D73;
+            color: #ffffff;
+        }
+        .btn-silver{
+            background: #7C7A7A;
+            color: #ffffff;
+        }
+        .bottom-margin{
+            margin-bottom: 50px;
+        }
+        .bottom-margin-sm{
+            margin-bottom: 20px;
+        }
+        #fireworks-canvas{
+            background:none; 
+            width:100%; 
+            height:100vh;
+            position: fixed;
+            top: 0;
+            left:0;
+            z-index:999;
+            pointer-events:none;
+        }
+        .page-content{
+            z-index: 9999999;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous"></script>
+</head>
+<body>
+    <canvas id="fireworks-canvas"></canvas>
+    <div id="existing" class="page-content" style="display: none;">
+        <h1 class="top-margin">Watch an existing draw</h1>
+        <h3 class="bottom-margin">Please enter the draw code to watch the live draw take place.</h3>
+        <form method="GET">
+            <input autocomplete="off" name="drawcode" type="text" placeholder="draw code" />
+            <button class="btn-rose">Watch Live</button>
+        </form>
+    </div>
+    <div id="watch" class="page-content" style="display: none;">
+        <h1 class="drawResult top-margin">You're watching the draw...</h1>
+        <h3 id='drawSubtext' class="bottom-margin">Please wait for the draw organiser to start the draw.</h3>
+        <small>There are currently <span class="clientCount">0</span> people watching this draw.</small>
+    </div>
+    <div id="admin" class="page-content" style="display: none;">
+        <h1 class="top-margin-sm">Manage Draw</h1>
+        <h3 id='drawSubtext' class="bottom-margin-sm">You can share this draw publicly with the draw code below.</h3>
+        <form id="adminForm">
+            <input class="bottom-margin-sm" id="adminRoomId" autocomplete="off" type="text" placeholder="draw code" disabled="true" /><br />
+            <input class="bottom-margin-sm" id="adminLowerLimit" autocomplete="off" type="number" min="0" placeholder="lower limit" required="true" /><br />
+            <input class="bottom-margin-sm" id="adminUpperLimit" autocomplete="off" type="number" max="50000" placeholder="upper limit" required="true" /><br />
+            <input class="bottom-margin-sm" id="adminResult" autocomplete="off" type="text" value="result" disabled="true" /><br />
+            <button class="btn-rose bottom-margin-sm">Draw result</button><br />
+        </form>
+        <small>There are currently <span class="clientCount">0</span> people watching your draw.</small>
+    </div>
+    <div id="create" class="page-content" style="display: none;">
+        <h1 class="top-margin">Create a free online draw</h1>
+        <h3 class="bottom-margin">Upon pressing 'create' you will be presented with a code for your draw which you can share online.</h3>
+        <form id="createRoom">
+            <input id="createPassphrase" autocomplete="off" name="drawcode" type="password" placeholder="create passphrase" required="true" minlength="5" />
+            <button class="btn-rose">Create</button>
+        </form>
+    </div>
+    <script src="confetti.min.js"></script>
+    <script src="fireworks.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="jquery.codex.js"></script>
+    <script>
+        let passcode = null;
+
+        function getQueryVariable(variable) {
+            var query = window.location.search.substring(1);
+            var vars = query.split('&');
+            for (var i = 0; i < vars.length; i++) {
+                var pair = vars[i].split('=');
+                if (decodeURIComponent(pair[0]) == variable) {
+                    return decodeURIComponent(pair[1]);
+                }
+            }
+            console.debug('Query variable %s not found', variable);
+        }
+        const createRoom = e => {
+            e.preventDefault();
+            passcode = e.target.querySelector('input#createPassphrase').value;
+            window.socket.emit('createRoom', e.target.querySelector('input#createPassphrase').value);
+        }
+        window.onload = () => {
+            window.socket = io();
+
+            if(getQueryVariable('drawcode')){
+                document.querySelector('#watch').style.display = 'initial';
+                window.socket.emit('join', getQueryVariable('drawcode'));
+            }else if(getQueryVariable('create')){
+                document.querySelector('#create').style.display = 'initial';
+                document.querySelector('#createRoom').onsubmit = createRoom;
+            }else{
+                document.querySelector('#existing').style.display = 'initial';
+            }
+
+            document.querySelector('#fireworks-canvas').width = window.innerWidth;
+            document.querySelector('#fireworks-canvas').height = window.innerHeight;
+            var firework = JS_FIREWORKS.Fireworks({
+                id : 'fireworks-canvas',
+                hue : 120,
+                particleCount : 100,
+                delay : 0,
+                minDelay : 20,
+                maxDelay : 40,
+                boundaries : { // of respawn and target
+                    top: 50,
+                    bottom: window.innerHeight - 100,
+                    left: 50,
+                    right: window.innerWidth - 50
+                },
+                fireworkSpeed : 5,
+                fireworkAcceleration : 1.05,
+                particleFriction : .95,
+                particleGravity : 1.5
+            });
+
+            window.socket.on('created', data => {
+                data = JSON.parse(data);
+
+                if(data.roomId){
+                    document.querySelector('#create').style.display = 'none';
+                    document.querySelector('#admin').style.display = 'initial';
+                    document.querySelector('#adminRoomId').value = data.roomId;
+                    document.querySelector('#adminForm').onsubmit = (e) => {
+                        e.preventDefault();
+                        window.socket.emit('draw', JSON.stringify({
+                            passcode,
+                            lowerLimit: document.querySelector('#adminLowerLimit').value,
+                            upperLimit: document.querySelector('#adminUpperLimit').value,
+                        }));
+                    }
+                }
+            })
+
+            window.socket.on('confetti', start => {
+                if(start){
+                    confetti.start();
+                }else{
+                    confetti.stop();
+                }
+            });
+
+            window.socket.on('firework', start => {
+                if(start){
+                    firework.start();
+                }else{
+                    firework.stop();
+                }
+            });
+
+            window.socket.on('clientCount', count => {
+                document.querySelectorAll('.clientCount').forEach(element => {
+                    element.innerText = count;
+                });
+            });
+
+            window.socket.on('drawResult', result => {
+                $(".drawResult").codex({
+                    final_text: result
+                });
+                document.querySelector('#adminResult').value = result;
+                document.querySelector('#drawSubtext').innerText = 'The draw has been completed, and the winning number is shown above.';
+                firework.start();
+                confetti.start();
+            });
+        }
+    </script>
+</body>
+</html>
