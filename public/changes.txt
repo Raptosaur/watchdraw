@@ -1,0 +1,5 @@
+v1.3: Fixed mobile showing NaN on small draw sizes and changed front end to also have 5s draw time.
+
+v1.2: Fireworks delayed until winner is revealed when in admin mode.
+
+v1.1: Results will now take approx 5 seconds to appear - it will count up incrementally until hitting the random number sent from the server and turning a rose colour.

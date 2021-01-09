@@ -222,28 +222,31 @@
                 $(".drawResult").codex({
                     final_text: result
                 });
-                document.querySelector('#adminResult').value = 0;
-                const msToComplete = result >= 5000 ? 5000 : result;
-                let current = 0;
-                let countUp;
-                countUp = setInterval(() => {
-                    current += Math.floor((result/msToComplete)*100);
-                    if(current >= result){
-                        current = result;
-                        clearInterval(countUp);
-                        document.querySelector('#adminResult').value = current;
-                        document.querySelector('#adminResult').classList.add('btn-rose');
-                        firework.start();
-                        confetti.start();
-                    }
+                
+                const msToComplete = 5000;
+                const countUp = setInterval(() => {
+                    const current = Math.floor(Math.random()*6969);
+                    document.querySelectorAll(".drawResult").forEach(elem => {
+                        elem.innerText = current;
+                    });
                     document.querySelector('#adminResult').value = current;
-                }, 100);
+                }, 10);
 
-                document.querySelector('#drawSubtext').innerText = 'The draw has been completed, and the winning number is shown above.';
-                if(!getQueryVariable('create')){
-                    firework.start();
+                setTimeout(() => {
+                    clearInterval(countUp);
+                    document.querySelectorAll(".drawResult").forEach(elem => {
+                        elem.innerText = result;
+                    });
+                    document.querySelector('#adminResult').value = result;
+                    document.querySelector('#adminResult').classList.add('btn-rose');
+                    if(!firework.isRunning()){
+                        firework.start();
+                    }
                     confetti.start();
-                }
+                    document.querySelector('#drawSubtext').innerText = 'The draw has been completed, and the winning number is shown above.';
+                }, msToComplete);
+
+                document.querySelector('#drawSubtext').innerText = 'The draw is in progress, and the winning number will be shown above.';
             });
         }
     </script>
