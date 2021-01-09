@@ -219,10 +219,6 @@
             });
 
             window.socket.on('drawResult', result => {
-                $(".drawResult").codex({
-                    final_text: result
-                });
-                
                 const msToComplete = 5000;
                 const countUp = setInterval(() => {
                     const current = Math.floor(Math.random()*6969);
