@@ -70,7 +70,7 @@ io.on('connection', (socket) => {
                 method: "generateIntegers",
                 params:
                     {
-                        apiKey: "2d18ca80-0e11-44db-9b9d-e6ce903ebc8c",
+                        apiKey: process.env.API_KEY,
                         n: 1,
                         min: data.lowerLimit,
                         max: data.upperLimit,
